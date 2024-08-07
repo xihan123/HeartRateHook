@@ -11,7 +11,8 @@
 
 HeartRateHook 是一个用于监控和更新心率数据的项目
 
-本项目是 [miband-heart-rate-bot](https://github.com/xihan123/miband-heart-rate-bot) 配套的 Android 项目
+本项目是 [miband-heart-rate-bot](https://github.com/xihan123/miband-heart-rate-bot) 配套的 Android
+项目
 
 ## 适配应用
 
@@ -71,27 +72,6 @@ private fun provideKtorfit(httpClient: HttpClient) = Ktorfit.Builder()
 ## 许可证
 
 本项目采用 GPLV3.0 许可证，详细信息请参阅 LICENSE 文件
-
-## 打赏
-
-## 如果觉得这个模块对您有用，可扫描下方二维码或者 [爱发电](https://afdian.net/a/xihan123) 随意打赏,要是能打赏个 10.24 🐵就太👍了。您的支持就是我更新的动力
-
-<table>
-<tr>
-<td align=center>支付宝</td>
-<td align=center>微信</td>
-</tr>
-
-<tr>
-<td>
-<img src="https://github.moeyy.xyz/https://raw.githubusercontent.com/xihan123/QDReadHook/master/Screenshots/zfb.jpg" width=270 >
-</td>
-<td>
-<img src="https://github.moeyy.xyz/https://raw.githubusercontent.com/xihan123/QDReadHook/master/Screenshots/wx.png" width=270 >
-</td>
-</tr>
-
-</table>
 
 ---
 
