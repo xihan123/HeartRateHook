@@ -1,9 +1,6 @@
 ![HeartRateHook](https://socialify.git.ci/xihan123/HeartRateHook/image?description=1&font=Inter&forks=1&issues=1&language=1&name=1&owner=1&pattern=Plus&pulls=1&stargazers=1&theme=Light)
 
 ![above](https://img.shields.io/badge/Android-8.0%20or%20above-brightgreen.svg)
-[![Android CI](https://github.com/xihan123/HeartRateHook/actions/workflows/build.yml/badge.svg)](https://github.com/xihan123/HeartRateHook/actions/workflows/build.yml)
-[![Latest Release](https://img.shields.io/github/release/xihan123/HeartRateHook.svg)](https://github.com/xihan123/HeartRateHook/releases)
-![downloads](https://img.shields.io/github/downloads/xihan123/HeartRateHook/total)
 [![license](https://img.shields.io/github/license/xihan123/HeartRateHook.svg)](https://www.gnu.org/licenses/gpl-3.0.html)
 
 ---
@@ -44,13 +41,15 @@ HeartRateHook 是一个用于监控和更新心率数据的项目
 
 3. 配置 `local.properties` 文件中的 SDK 路径，以及 `keystore.properties` 文件中的签名配置
 
-4. 编译发布版：
+4. 修改 `Di.kt` 文件中的 `provideKtorfit` 方法，将 `baseUrl` 修改为你的服务器地址
+
+5. 编译发布版：
 
     ```sh
     ./gradlew synthesizeDistReleaseApksCI
     ```
 
-5. 运行项目
+6. 勾选作用域即可
 
 ## 主要代码说明
 
