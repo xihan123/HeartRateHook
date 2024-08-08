@@ -212,3 +212,30 @@ fun ByteArray.toHexString(): String {
     }
     return sb.toString()
 }
+
+/**
+ * 获取参数
+ * @param [name] 名称
+ * @param [isSuperClass] 是超一流
+ * @return [T?]
+ * @suppress Generate Documentation
+ */
+@Throws(NoSuchFieldException::class, IllegalAccessException::class)
+inline fun <reified T> Any.getParam(name: String, isSuperClass: Boolean = false): T? {
+    val queue = ArrayDeque<Class<*>>()
+    var clazz: Class<*>? = if (isSuperClass) javaClass.superclass else javaClass
+    while (clazz != null) {
+        queue.add(clazz)
+        clazz = clazz.superclass
+    }
+    while (queue.isNotEmpty()) {
+        val currentClass = queue.removeFirst()
+        try {
+            val field = currentClass.getDeclaredField(name).apply { isAccessible = true }
+            return field[this].safeCast<T>()
+        } catch (_: NoSuchFieldException) {
+            // Ignore and continue searching
+        }
+    }
+    return null
+}
