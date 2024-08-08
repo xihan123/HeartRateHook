@@ -105,36 +105,20 @@ fun PackageParam.hookZeppLife(bridge: DexKitBridge) {
 }
 
 fun PackageParam.hookMiLife(bridge: DexKitBridge) {
-    bridge.findClass {
-        excludePackages = listOf("com")
-        matcher {
-            usingStrings = listOf("layout_outdoor_running_title", "view_outdoor_sport_data")
-        }
-    }.firstNotNullOfOrNull { classData ->
-        classData.findMethod {
-            matcher {
-                modifiers = Modifier.PUBLIC
-                paramTypes = listOf("java.util.List")
-                paramCount = 1
-                returnType = "void"
-            }
-        }.firstNotNullOfOrNull { methodData ->
-            methodData.className.toClass().method {
-                name = methodData.methodName
-                paramCount(methodData.paramTypeNames.size)
-                returnType = UnitType
-            }.hook().after {
-                val heartRateData = args.toJSONString() ?: return@after
-                // 去掉第一层[]
-                val copyHeartRateData = heartRateData.substring(1, heartRateData.length - 1)
-                val heartRateModel = kJson.decodeFromString<List<Models>>(copyHeartRateData)
-                val heartRate =
-                    heartRateModel.firstOrNull { it.dataDes == "心率" }?.data?.toIntOrNull()
-                        ?: return@after
-                if (heartRate < 0) return@after
-                "当前心率: $heartRate".loge()
-                Ktor.sendHeartRate(heartRate)
-            }
-        }
+    "com.xiaomi.fitness.sport.viewmodel.BaseSportVM".toClass().method {
+        name = "onSuccess"
+        param("com.xiaomi.fitness.sport.bean.SportingData".toClass())
+        returnType = UnitType
+    }.hook().after {
+        val sportingData = args.firstOrNull() ?: return@after
+        val list = sportingData.getParam<List<*>>("list") ?: return@after
+        val heartRateData = list.toJSONString()
+        val heartRateModel = kJson.decodeFromString<List<Models>>(heartRateData)
+        val heartRate =
+            heartRateModel.firstOrNull { it.dataDes == "心率" }?.data?.toIntOrNull()
+                ?: return@after
+        if (heartRate < 0) return@after
+        "当前心率: $heartRate".loge()
+        Ktor.sendHeartRate(heartRate)
     }
 }
