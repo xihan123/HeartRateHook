@@ -30,40 +30,13 @@ HeartRateHook 是一个用于监控和更新心率数据的项目
 - `keystore.properties`: 包含签名配置，如签名密码
 - `local.properties`: 包含本地配置，如 Android SDK 路径
 
-## 安装与使用
+## 如何使用
 
-1. 克隆项目到本地：
+1. 勾选作用域
 
-    ```sh
-    git clone https://github.com/xihan123/HeartRateHook.git
-    ```
+2. 在 [适配的应用](#适配应用) -> 关于 -> 单击图标 -> 弹出对话框 -> 设置服务器地址
 
-2. 使用 Android Studio 打开项目
-
-3. 配置 `local.properties` 文件中的 SDK 路径，以及 `keystore.properties` 文件中的签名配置
-
-4. 修改 `Di.kt` 文件中的 `provideKtorfit` 方法，将 `baseUrl` 修改为你的服务器地址
-
-5. 编译发布版：
-
-    ```sh
-    ./gradlew synthesizeDistReleaseApksCI
-    ```
-
-6. 勾选作用域即可
-
-## 主要代码说明
-
-### Di.kt
-
-使用前需要配置 `Di.kt` 文件中的 `provideKtorfit` 方法，将 `baseUrl` 修改为你的服务器地址
-
-```kotlin
-private fun provideKtorfit(httpClient: HttpClient) = Ktorfit.Builder()
-    .httpClient(httpClient)
-    .baseUrl("http://192.168.43.100:8000/") // TODO: 这里是你的服务器地址
-    .build()
-```
+   ps: 修改服务器地址后需要重启应用
 
 ## 贡献
 
