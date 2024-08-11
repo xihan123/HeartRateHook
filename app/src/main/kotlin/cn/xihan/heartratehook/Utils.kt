@@ -1,10 +1,16 @@
 package cn.xihan.heartratehook
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Parcelable
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
 import com.alibaba.fastjson2.toJSONString
+import com.drake.serialize.serialize.serial
 import com.highcapable.yukihookapi.hook.factory.MembersType
 import com.highcapable.yukihookapi.hook.factory.constructor
 import com.highcapable.yukihookapi.hook.factory.method
@@ -214,6 +220,62 @@ fun ByteArray.toHexString(): String {
 }
 
 /**
+ * 获取视图
+ * @param [name] 名称
+ * @param [isSuperClass] 是超一流
+ * @return [T?]
+ * @suppress Generate Documentation
+ */
+@Throws(NoSuchFieldException::class, IllegalAccessException::class)
+inline fun <reified T : View> Any.getView(name: String, isSuperClass: Boolean = false): T? =
+    getParam<T>(name, isSuperClass)
+
+/**
+ * 获取视图
+ * @param [pairs] 对
+ * @return [List<View>]
+ * @suppress Generate Documentation
+ */
+fun Any.getViews(vararg pairs: Pair<String, Boolean> = arrayOf("name" to false)): List<View> =
+    if (pairs.isEmpty()) emptyList()
+    else pairs.mapNotNull { (name, isSuperClass) -> getParam<View>(name, isSuperClass) }
+
+/**
+ * 获取视图
+ * @param [isSuperClass] 是超一流
+ * @suppress Generate Documentation
+ */
+@Throws(NoSuchFieldException::class, IllegalAccessException::class)
+inline fun <reified T : View> Any.getViews(isSuperClass: Boolean = false) =
+    getParamList<T>(isSuperClass)
+
+/**
+ * 获取视图
+ * @param [type] 类型
+ * @param [isSuperClass] 是超一流
+ * @return [ArrayList<Any>]
+ * @suppress Generate Documentation
+ */
+@Throws(NoSuchFieldException::class, IllegalAccessException::class)
+fun Any.getViews(type: Class<*>, isSuperClass: Boolean = false): ArrayList<Any> {
+    val results = arrayListOf<Any>()
+    val classes =
+        if (isSuperClass) generateSequence(javaClass) { it.superclass }.toList() else listOf(
+            javaClass
+        )
+    for (clazz in classes) {
+        clazz.declaredFields.filter { type.isAssignableFrom(it.type) }.forEach { field ->
+            field.isAccessible = true
+            val value = field.get(this)
+            if (type.isInstance(value)) {
+                results += value as Any
+            }
+        }
+    }
+    return results
+}
+
+/**
  * 获取参数
  * @param [name] 名称
  * @param [isSuperClass] 是超一流
@@ -239,3 +301,107 @@ inline fun <reified T> Any.getParam(name: String, isSuperClass: Boolean = false)
     }
     return null
 }
+
+/**
+ * 获取参数列表
+ * @param [isSuperClass] 是超一流
+ * @return [ArrayList<T>]
+ * @suppress Generate Documentation
+ */
+@Throws(NoSuchFieldException::class, IllegalAccessException::class)
+inline fun <reified T> Any.getParamList(isSuperClass: Boolean = false): ArrayList<T> {
+    val results = ArrayList<T>()
+    val classes =
+        if (isSuperClass) generateSequence(javaClass) { it.superclass }.toList() else listOf(
+            javaClass
+        )
+    val type = T::class.java
+    for (clazz in classes) {
+        clazz.declaredFields.filter { type.isAssignableFrom(it.type) }.forEach { field ->
+            field.isAccessible = true
+            val value = field.get(this)
+            if (type.isInstance(value)) {
+                results += value as T
+            }
+        }
+    }
+    return results
+}
+
+fun ViewGroup.findViewsByType(viewClass: Class<*>): ArrayList<View> {
+    val result = arrayListOf<View>()
+    val queue = ArrayDeque<View>()
+    queue.add(this)
+
+    while (queue.isNotEmpty()) {
+        val view = queue.removeFirst()
+        if (viewClass.isInstance(view)) {
+            result.add(view)
+        }
+
+        if (view is ViewGroup) {
+            for (i in 0..<view.childCount) {
+                queue.add(view.getChildAt(i))
+            }
+        }
+    }
+
+    return result
+}
+
+fun View.getName() = toString().substringAfter("/").replace("}", "")
+
+fun Context.copyToClipboard(text: String) {
+    val clipboardManager = this.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    clipboardManager.setPrimaryClip(ClipData.newPlainText(null, text))
+}
+
+fun Context.dp(value: Int): Int = (value * resources.displayMetrics.density).toInt()
+
+infix fun Int.x(other: Int): ViewGroup.LayoutParams = ViewGroup.LayoutParams(this, other)
+
+fun Context.toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+
+object Utils {
+    var BASE_URL: String? by serial()
+
+
+    fun View.setOnClickListener() {
+        setOnClickListener {
+            context.showBaseUrlDialog()
+        }
+    }
+
+    /**
+     * 展示设置基础URL的对话框
+     */
+    fun Context.showBaseUrlDialog() {
+        var innerBaseUrl = BASE_URL ?: ""
+        val editText = CustomEditText(
+            context = this,
+            value = innerBaseUrl,
+            hint = "请输入服务器地址"
+        ) {
+            innerBaseUrl = it
+        }
+
+        alertDialog {
+            title = "设置服务器地址"
+            customView = editText
+            okButton {
+                if (innerBaseUrl.isBlank()) {
+                    toast("服务器地址不能为空")
+                } else {
+                    BASE_URL = innerBaseUrl
+                    toast("设置成功")
+                }
+            }
+            build()
+            show()
+        }
+    }
+
+
+}
+
+

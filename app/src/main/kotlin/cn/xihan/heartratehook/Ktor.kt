@@ -37,7 +37,6 @@ object Ktor : KoinComponent {
     private val apiService: ApiService by inject()
     private val heartRateChannel = Channel<Int>(Channel.UNLIMITED)
 
-
     private suspend fun <T> apiService(
         block: suspend ApiService.() -> T,
     ): T = apiService.block()

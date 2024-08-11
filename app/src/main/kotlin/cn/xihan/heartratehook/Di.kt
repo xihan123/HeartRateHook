@@ -57,7 +57,7 @@ private fun provideHttpClient(): HttpClient = HttpClient(OkHttp) {
 
 private fun provideKtorfit(httpClient: HttpClient) = Ktorfit.Builder()
     .httpClient(httpClient)
-    .baseUrl("http://192.168.43.100:8000/") // TODO: 这里是你的服务器地址
+    .baseUrl(Utils.BASE_URL.orEmpty())
     .build()
 
 private fun provideApiService(ktorfit: Ktorfit): ApiService = ktorfit.createApiService()
