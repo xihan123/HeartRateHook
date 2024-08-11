@@ -27,14 +27,18 @@ val repo = jgit.repo()
 val commitCount = (repo?.commitCount("refs/remotes/origin/master") ?: 1) + 24
 val latestTag = repo?.latestTag?.removePrefix("v") ?: "1.x.x-SNAPSHOT"
 
-val verCode by extra(101)
-val verName by extra("1.0.1")
+val verCode by extra(commitCount)
+val verName by extra(latestTag)
 val androidTargetSdkVersion by extra(35)
 val androidMinSdkVersion by extra(26)
 
 android {
     namespace = "cn.xihan.heartratehook"
     compileSdk = androidTargetSdkVersion
+
+    androidResources.additionalParameters += arrayOf(
+        "--allow-reserved-package-id", "--package-id", "0x64"
+    )
 
     signingConfigs {
         create("xihantest") {
@@ -81,6 +85,7 @@ android {
 
     buildFeatures {
         buildConfig = true
+        viewBinding = true
     }
     packagingOptions.apply {
         resources.excludes += mutableSetOf(
@@ -98,6 +103,8 @@ android {
 }
 
 dependencies {
+    implementation(kotlin("reflect"))
+    implementation(libs.android.material)
     implementation(libs.core.ktx)
     implementation(libs.dexkit)
     implementation(libs.fast.json)
@@ -114,6 +121,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.serialize)
     implementation(libs.yukihook.api)
     ksp(libs.yukihook.ksp)
     compileOnly(libs.xposed.api)
