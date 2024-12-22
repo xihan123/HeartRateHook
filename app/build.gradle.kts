@@ -127,6 +127,18 @@ dependencies {
     compileOnly(libs.xposed.api)
 }
 
+tasks.register("stopMiLife") {
+    exec {
+        commandLine("adb", "shell", "am", "force-stop", "com.mi.health")
+    }
+}
+
+tasks.register("stopZeppLife") {
+    exec {
+        commandLine("adb", "shell", "am", "force-stop", "com.xiaomi.hm.health")
+    }
+}
+
 val synthesizeDistReleaseApksCI by tasks.registering {
     group = "build"
     dependsOn(":app:packageRelease")
