@@ -1,5 +1,6 @@
 package cn.xihan.heartratehook
 
+import android.app.Activity
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -124,7 +125,8 @@ fun PackageParam.hookZeppLife(bridge: DexKitBridge) {
         val imageView =
             itemView.parent.parent.safeCast<ViewGroup>()?.findViewsByType(ImageViewClass)
                 ?.firstOrNull { it.getName() == "about_app_icon" } ?: return@after
-        imageView.setOnClickListener()
+        val activity = instance<Activity>()
+        imageView.setOnClickListener(activity)
     }
 }
 
@@ -161,8 +163,9 @@ fun PackageParam.hookMiLife(bridge: DexKitBridge) {
             "imageViews is empty".loge()
             return@after
         }
+        val activity = instance<Activity>()
         imageViews.forEach { imageView ->
-            imageView.setOnClickListener()
+            imageView.setOnClickListener(activity)
         }
     }
 }
