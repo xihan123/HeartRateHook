@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.1](https://github.com/xihan123/HeartRateHook/compare/v1.0.0...v1.0.1) (2024-12-22)
+
+
+### Build
+
+* 升级 Gradle到 8.12 版本 ([a422710](https://github.com/xihan123/HeartRateHook/commit/a422710aa7e0721391ad46993126a4e160726290))
+* 更新项目依赖版本 ([074c53a](https://github.com/xihan123/HeartRateHook/commit/074c53a7d654f62bfcb40b0dabfd1a8b56465ac4))
+* 添加停止 Mi Life 和 Zepp Life 应用的任务 ([afafa4d](https://github.com/xihan123/HeartRateHook/commit/afafa4d0878ff2d5aeb0b8a2b42163b75de757a3))
+
 ## 1.0.0 (2024-08-11)
 
 
