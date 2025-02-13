@@ -1,5 +1,6 @@
 package cn.xihan.heartratehook
 
+import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -19,6 +20,7 @@ import com.highcapable.yukihookapi.hook.param.HookParam
 import com.highcapable.yukihookapi.hook.param.PackageParam
 import kotlinx.serialization.json.Json
 import java.io.Serializable
+import kotlin.system.exitProcess
 
 /**
  * @项目名 : HeartRateHook
@@ -362,20 +364,29 @@ infix fun Int.x(other: Int): ViewGroup.LayoutParams = ViewGroup.LayoutParams(thi
 
 fun Context.toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
 
+/**
+ * 重新启动应用程序
+ */
+fun Activity.restartApplication() = packageManager.getLaunchIntentForPackage(packageName)?.let {
+    finishAffinity()
+    startActivity(intent)
+    exitProcess(0)
+}
+
 object Utils {
     var BASE_URL: String? by serial()
 
 
-    fun View.setOnClickListener() {
+    fun View.setOnClickListener(activity: Activity) {
         setOnClickListener {
-            context.showBaseUrlDialog()
+            activity.showBaseUrlDialog()
         }
     }
 
     /**
      * 展示设置基础URL的对话框
      */
-    fun Context.showBaseUrlDialog() {
+    fun Activity.showBaseUrlDialog() {
         var innerBaseUrl = BASE_URL ?: ""
         val editText = CustomEditText(
             context = this,
@@ -387,14 +398,23 @@ object Utils {
 
         alertDialog {
             title = "设置服务器地址"
+            message = "先确认后再重启应用"
             customView = editText
             okButton {
                 if (innerBaseUrl.isBlank()) {
                     toast("服务器地址不能为空")
                 } else {
+                    if (!innerBaseUrl.endsWith("/")) {
+                        innerBaseUrl += "/"
+                    }
                     BASE_URL = innerBaseUrl
                     toast("设置成功")
+                    restartApplication()
                 }
+            }
+
+            negativeButton("重启应用") {
+                restartApplication()
             }
             build()
             show()
@@ -403,5 +423,3 @@ object Utils {
 
 
 }
-
-
