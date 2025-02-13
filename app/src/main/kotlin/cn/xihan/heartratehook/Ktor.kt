@@ -1,17 +1,23 @@
 package cn.xihan.heartratehook
 
+import android.content.Context
 import de.jensklingenberg.ktorfit.http.Body
 import de.jensklingenberg.ktorfit.http.Headers
 import de.jensklingenberg.ktorfit.http.POST
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.supervisorScope
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -34,12 +40,18 @@ interface ApiService {
 
 object Ktor : KoinComponent {
 
+    private val ctx: Context by inject()
     private val apiService: ApiService by inject()
-    private val heartRateChannel = Channel<Int>(Channel.UNLIMITED)
+    private val heartRateFlow = MutableSharedFlow<Int>(
+        extraBufferCapacity = 64,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
 
-    private suspend fun <T> apiService(
-        block: suspend ApiService.() -> T,
-    ): T = apiService.block()
+    private suspend fun <T> callApi(block: suspend ApiService.() -> T) =
+        runCatching { apiService.block() }
+            .onFailure {
+                toast("网络请求失败: ${it.message}")
+            }
 
 
     /**
@@ -48,18 +60,20 @@ object Ktor : KoinComponent {
      * 每个心率值均由 updateHeartRate 函数处理
      */
     @OptIn(FlowPreview::class)
-    fun startHeartRateUpdates() {
-        CoroutineScope(Dispatchers.IO).launch {
-            heartRateChannel.consumeAsFlow()
-                .debounce(250) // Debounce 等待 250ms 的非活动状态，然后再处理下一个值
-                .onEach { heartRate ->
-                    updateHeartRate(heartRate) // 处理每个心率值
-                }
-                .collect() //收集流
-        }
+    fun startHeartRateUpdates() = CoroutineScope(Dispatchers.IO).launch {
+        heartRateFlow
+            .asSharedFlow()
+            .debounce(250) // Debounce 等待 250ms 的非活动状态，然后再处理下一个值
+            .catch {
+                "协程流异常: ${it.message}".loge()
+            }
+            .onEach(::updateHeartRate)
+            .conflate()
+            .collect() //收集流
     }
 
-    suspend fun updateHeartRate(heartRate: Int) = apiService {
+
+    suspend fun updateHeartRate(heartRate: Int) = callApi {
         updateHeartRate(
             HeartRateModel(
                 data = HeartRateModel.DataModel(heartRate),
@@ -69,10 +83,9 @@ object Ktor : KoinComponent {
     }
 
 
-    fun sendHeartRate(heartRate: Int) {
-        CoroutineScope(Dispatchers.IO).launch {
-            heartRateChannel.send(heartRate)
-        }
+    fun sendHeartRate(heartRate: Int) = runBlocking(Dispatchers.IO) {
+        heartRateFlow.emit(heartRate)
     }
 
+    private fun toast(msg: String) = ctx.applicationContext.toast(msg)
 }
