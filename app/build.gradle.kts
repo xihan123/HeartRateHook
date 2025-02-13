@@ -139,6 +139,27 @@ tasks.register("stopZeppLife") {
     }
 }
 
+val restart = task("restart").apply {
+    doLast {
+        exec {
+            commandLine("adb", "shell", "am", "force-stop", "com.mi.health")
+        }
+        exec {
+            commandLine(
+                "adb",
+                "shell",
+                "am",
+                "start",
+                "$(pm resolve-activity --components com.mi.health)"
+            )
+        }
+    }
+}
+
+afterEvaluate {
+    tasks.getByPath("installDebug").finalizedBy(restart)
+}
+
 val synthesizeDistReleaseApksCI by tasks.registering {
     group = "build"
     dependsOn(":app:packageRelease")
