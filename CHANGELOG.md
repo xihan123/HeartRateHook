@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.1.0](https://github.com/xihan123/HeartRateHook/compare/v1.0.1...v1.1.0) (2025-02-13)
+
+
+### Features
+
+* **Utils:** 优化服务器地址设置功能 ([2c3e776](https://github.com/xihan123/HeartRateHook/commit/2c3e776fcbf65e785dcf5e3a7489452613899073))
+* 增加Activity实例到ImageView点击事件 ([e21c050](https://github.com/xihan123/HeartRateHook/commit/e21c050f7efa3e78765a13b995b8eb8672185319))
+
+
+### Refactoring
+
+* **app:** 重构心率数据流处理逻辑 ([eba872a](https://github.com/xihan123/HeartRateHook/commit/eba872aadc9e292803348201e954bacf2c98439f))
+
+
+### Build
+
+* 更新项目依赖版本 ([b8e3fa4](https://github.com/xihan123/HeartRateHook/commit/b8e3fa4249a3ee5424a886ae0f44e086a5cae973))
+* 添加dependabot配置以自动更新依赖 ([c7fa783](https://github.com/xihan123/HeartRateHook/commit/c7fa7832a6425635bec34559f5204de31be04c4e))
+* 添加安装后重启功能并简化根构建脚本 ([061d05e](https://github.com/xihan123/HeartRateHook/commit/061d05e74e06a2ee3951329cc7e1ff4166e26afb))
+
 ## [1.0.1](https://github.com/xihan123/HeartRateHook/compare/v1.0.0...v1.0.1) (2024-12-22)
 
 
