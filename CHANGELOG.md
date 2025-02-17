@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.1.1](https://github.com/xihan123/HeartRateHook/compare/v1.1.0...v1.1.1) (2025-02-17)
+
+
+### Miscellaneous
+
+* 移除 Dependabot 配置文件 ([d46ec36](https://github.com/xihan123/HeartRateHook/commit/d46ec36ac74250afff78fe9f49c20d1e87293567))
+
+
+### Refactoring
+
+* **#6:** 优化心率数据发送逻辑 ([a4fbad5](https://github.com/xihan123/HeartRateHook/commit/a4fbad59dd67e1e27de5605b5da13c2d387a1f61))
+
+
+### Build
+
+* 更新项目依赖版本 ([7d45d28](https://github.com/xihan123/HeartRateHook/commit/7d45d2832509480aea2fdbc86601313bc1f89766))
+* 添加 Renovate 配置文件 ([1e99a63](https://github.com/xihan123/HeartRateHook/commit/1e99a639c1ed7654f1ff417ccc52921f3c22979b))
+
 ## [1.1.0](https://github.com/xihan123/HeartRateHook/compare/v1.0.1...v1.1.0) (2025-02-13)
 
 
