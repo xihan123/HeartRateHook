@@ -16,8 +16,6 @@ import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.supervisorScope
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -83,9 +81,11 @@ object Ktor : KoinComponent {
     }
 
 
-    fun sendHeartRate(heartRate: Int) = runBlocking(Dispatchers.IO) {
+    fun sendHeartRate(heartRate: Int) = CoroutineScope(Dispatchers.IO).launch {
         heartRateFlow.emit(heartRate)
     }
 
-    private fun toast(msg: String) = ctx.applicationContext.toast(msg)
+    private fun toast(msg: String) = CoroutineScope(Dispatchers.Main.immediate).launch {
+        ctx.applicationContext.toast(msg)
+    }
 }
