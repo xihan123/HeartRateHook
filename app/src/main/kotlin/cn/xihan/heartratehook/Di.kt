@@ -4,7 +4,6 @@ import de.jensklingenberg.ktorfit.Ktorfit
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpResponseValidator
-import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.compression.ContentEncoding
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
@@ -39,11 +38,11 @@ private fun provideHttpClient(): HttpClient = HttpClient(OkHttp) {
         gzip(0.9F)
     }
 
-    install(HttpTimeout) {
-        requestTimeoutMillis = 10000
-        connectTimeoutMillis = 10000
-        socketTimeoutMillis = 10000
-    }
+//    install(HttpTimeout) {
+//        requestTimeoutMillis = 10000
+//        connectTimeoutMillis = 10000
+//        socketTimeoutMillis = 10000
+//    }
 
 //    install(Logging) {
 //        logger = object : Logger {
