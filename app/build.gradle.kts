@@ -11,12 +11,12 @@ import java.security.cert.X509Certificate
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.jgit)
+    alias(libs.plugins.agp.app)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.ktorfit)
+    alias(libs.plugins.lsplugin.jgit)
+    alias(libs.plugins.lsplugin.resopt)
+    alias(libs.plugins.lsplugin.lsparanoid)
 }
 
 val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -24,21 +24,26 @@ val keystoreProperties = Properties()
 keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 
 val repo = jgit.repo()
-val commitCount = (repo?.commitCount("refs/remotes/origin/master") ?: 1) + 24
+val commitCount = (repo?.commitCount("refs/remotes/origin/master") ?: 25)
+println("commitCount: $commitCount")
 val latestTag = repo?.latestTag?.removePrefix("v") ?: "1.x.x-SNAPSHOT"
 
-val verCode by extra(commitCount)
+val verCode by extra(commitCount  + 25)
 val verName by extra(latestTag)
+println("verCode: $verCode, verName: $verName")
 val androidTargetSdkVersion by extra(35)
 val androidMinSdkVersion by extra(26)
 
-android {
-    namespace = "cn.xihan.heartratehook"
-    compileSdk = androidTargetSdkVersion
+lsparanoid {
+    seed = null
+    classFilter = { true }
+    includeDependencies = false
+    variantFilter = { true }
+}
 
-    androidResources.additionalParameters += arrayOf(
-        "--allow-reserved-package-id", "--package-id", "0x64"
-    )
+android {
+    namespace = "website.xihan.pbra"
+    compileSdk = androidTargetSdkVersion
 
     signingConfigs {
         create("xihantest") {
@@ -57,22 +62,19 @@ android {
         versionCode = verCode
         versionName = verName
 
-        resourceConfigurations.addAll(listOf("zh"))
-
         signingConfig = signingConfigs.getByName("xihantest")
+    }
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
         release {
-            isDebuggable = false
-            isJniDebuggable = false
             isMinifyEnabled = true
-            isShrinkResources = true
-            isPseudoLocalesEnabled = true
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
             )
         }
     }
@@ -81,12 +83,16 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions.jvmTarget = "17"
-
-    buildFeatures {
-        buildConfig = true
-        viewBinding = true
+    kotlinOptions {
+        jvmTarget = "17"
+        freeCompilerArgs = listOf(
+            "-Xno-param-assertions",
+            "-Xno-call-assertions",
+            "-Xno-receiver-assertions",
+//            "-language-version=2.0",
+        )
     }
+
     packagingOptions.apply {
         resources.excludes += mutableSetOf(
             "META-INF/**",
@@ -99,14 +105,15 @@ android {
         dex.useLegacyPackaging = true
     }
 
-    lint.abortOnError = false
+    lint.checkReleaseBuilds = false
+
+    dependenciesInfo.includeInApk = false
 }
 
 dependencies {
+    implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
-    implementation(libs.android.material)
-    implementation(libs.core.ktx)
-    implementation(libs.dexkit)
+//    implementation(libs.dexkit)
     implementation(libs.fast.json)
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.android)
@@ -117,25 +124,17 @@ dependencies {
     implementation(libs.ktor.client.logging)
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.serialization.kotlinx.json)
-    implementation(libs.ktorfit.lib)
+    implementation(libs.kotlin.reflect)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.serialize)
-    implementation(libs.yukihook.api)
-    ksp(libs.yukihook.ksp)
     compileOnly(libs.xposed.api)
 }
 
 tasks.register("stopMiLife") {
     exec {
         commandLine("adb", "shell", "am", "force-stop", "com.mi.health")
-    }
-}
-
-tasks.register("stopZeppLife") {
-    exec {
-        commandLine("adb", "shell", "am", "force-stop", "com.xiaomi.hm.health")
     }
 }
 
@@ -207,7 +206,7 @@ val synthesizeDistReleaseApksCI by tasks.registering {
         ZFile.openReadOnly(inputApk).use { srcApk ->
             // check whether all required abis are in the apk
             requiredAbiList.forEach { abi ->
-                val path = "lib/$abi/libdexkit.so"
+                val path = "lib/$abi/libmmkv.so"
                 require(srcApk.get(path) != null) { "input apk should contain $path, but not found" }
             }
             outputAbiVariants.forEach { (variant, abis) ->
