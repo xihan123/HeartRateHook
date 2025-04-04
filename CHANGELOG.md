@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/xihan123/HeartRateHook/compare/v1.2.0...v1.2.1) (2025-04-04)
+
+
+### Bug Fixes
+
+* 上报时间5秒改为1分钟 ([25b7a72](https://github.com/xihan123/HeartRateHook/commit/25b7a72b495440ec9d61d805c073603d7e6e8abd))
+
 ## [1.2.0](https://github.com/xihan123/HeartRateHook/compare/v1.1.2...v1.2.0) (2025-04-04)
 
 
