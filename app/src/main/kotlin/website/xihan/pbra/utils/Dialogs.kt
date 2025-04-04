@@ -1,7 +1,8 @@
 @file:Suppress("unused")
 
-package cn.xihan.heartratehook
+package website.xihan.pbra.utils
 
+import android.R
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
@@ -167,7 +168,7 @@ inline fun <D : DialogInterface, T> Context.singleChoiceSelector(
  * @suppress Generate Documentation
  */
 fun AlertBuilder<*>.okButton(onClicked: (dialog: DialogInterface) -> Unit) =
-    positiveButton(android.R.string.ok, onClicked)
+    positiveButton(R.string.ok, onClicked)
 
 /**
  * 取消按钮
@@ -176,7 +177,7 @@ fun AlertBuilder<*>.okButton(onClicked: (dialog: DialogInterface) -> Unit) =
  * @suppress Generate Documentation
  */
 fun AlertBuilder<*>.cancelButton(onClicked: (dialog: DialogInterface) -> Unit = { it.dismiss() }) =
-    negativeButton(android.R.string.cancel, onClicked)
+    negativeButton(R.string.cancel, onClicked)
 
 /**
  * 单选项目

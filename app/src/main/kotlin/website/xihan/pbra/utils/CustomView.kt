@@ -1,4 +1,4 @@
-package cn.xihan.heartratehook
+package website.xihan.pbra.utils
 
 import android.content.Context
 import android.graphics.Typeface
@@ -8,6 +8,7 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ScrollView
+import android.widget.Switch
 import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
 
@@ -161,7 +162,7 @@ class CustomTextView(
             setOnLongClickListener {
                 context.apply {
                     copyToClipboard(text.toString())
-                    toast("已复制到剪贴板")
+                    ToastUtil.show("已复制到剪贴板")
                 }
                 true
             }
@@ -172,6 +173,50 @@ class CustomTextView(
     init {
         apply {
             addView(textView)
+            layoutParams =
+                if (isAutoWidth) WRAP_CONTENT x WRAP_CONTENT else MATCH_PARENT x MATCH_PARENT
+            setPadding(context.dp(10), context.dp(10), context.dp(10), context.dp(10))
+        }
+    }
+}
+
+/**
+ * 自定义开关视图
+ * 创建[CustomSwitchView]
+ * @param [context] 上下文
+ * @param [text] 文本
+ * @param [isChecked] 是否选中
+ * @param [isAutoWidth] 是自动宽度
+ * @param [isAutoHeight] 是自动高度
+ * @param [onCheckedChangeListener] 选中更改监听器
+ * @suppress Generate Documentation
+ */
+class CustomSwitchView(
+    context: Context,
+    text: CharSequence = "",
+    isChecked: Boolean = false,
+    isAutoWidth: Boolean = false,
+    isAutoHeight: Boolean = true,
+    onCheckedChangeListener: (Boolean, CustomSwitchView) -> Unit = { _, _ -> },
+) : CustomLinearLayout(context, isAutoWidth, isAutoHeight) {
+
+    val switch by lazy {
+        Switch(context).apply {
+            this.text = text
+            this.isChecked = isChecked
+            setOnCheckedChangeListener { _, isChecked ->
+                onCheckedChangeListener(isChecked, this@CustomSwitchView)
+            }
+        }
+    }
+
+    fun updateText(text: CharSequence) {
+        switch.text = text
+    }
+
+    init {
+        apply {
+            addView(switch)
             layoutParams =
                 if (isAutoWidth) WRAP_CONTENT x WRAP_CONTENT else MATCH_PARENT x MATCH_PARENT
             setPadding(context.dp(10), context.dp(10), context.dp(10), context.dp(10))
