@@ -114,7 +114,7 @@ object Ktor : KoinComponent {
                     } else {
                         ToastUtil.show("获取设备失败,需要去设备页面确定连接正常并同步一次数据")
                     }
-                    delay(5.seconds) //minutes
+                    delay(1.minutes)
                 }
             } catch (e: Exception) {
                 Log.e("Periodic sending error: ${e.message}")
