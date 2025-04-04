@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.2.0](https://github.com/xihan123/HeartRateHook/compare/v1.1.2...v1.2.0) (2025-04-04)
+
+
+### Features
+
+* **utils:** 新增 MiHealthPackage 工具类 ([78b3bdd](https://github.com/xihan123/HeartRateHook/commit/78b3bdd408737b61d016c2abdabfd12ac962b782))
+* **utils:** 新增工具类 Utils.kt ([603d310](https://github.com/xihan123/HeartRateHook/commit/603d310ff845a7c4ed095f7ac295588e8cc3fd31))
+* **utils:** 添加 Settings 对象用于持久化存储配置信息 ([1ce15c7](https://github.com/xihan123/HeartRateHook/commit/1ce15c754ceb9c4e7eb7685c53338eabf1cefd09))
+* **utils:** 添加 ToastUtil 工具类 ([1f44027](https://github.com/xihan123/HeartRateHook/commit/1f44027e835fc9320290dacf08eb83480888d63a))
+* **utils:** 添加安全的协程作用域工具类 ([b0f7ccf](https://github.com/xihan123/HeartRateHook/commit/b0f7ccfa892dff26727178e1c798588ffaef6492))
+* 添加 Kotlin Xposed 辅助类 ([b57e9e6](https://github.com/xihan123/HeartRateHook/commit/b57e9e6d59443ca212d76af45dc7701415c8d2ab))
+* 添加日志工具类 ([b28d77c](https://github.com/xihan123/HeartRateHook/commit/b28d77c943a98afc1deb7e007b8a5d130d047925))
+* 添加自定义 Cookie 存储类 ([24ab6d6](https://github.com/xihan123/HeartRateHook/commit/24ab6d6785e9f7c9ef493696581b0a58b3364f00))
+* 重构 Ktor客户端并添加登录功能 ([070066b](https://github.com/xihan123/HeartRateHook/commit/070066bd88ee8fdacc9a567b1a3c0e6d646ec3c5))
+
+
+### Performance Improvements
+
+* 优化 ProGuard 规则以减小 APK 体积 ([5fbe734](https://github.com/xihan123/HeartRateHook/commit/5fbe734a3bf431273852bed89f415dc01bda84ac))
+
 ## [1.1.1](https://github.com/xihan123/HeartRateHook/compare/v1.1.0...v1.1.1) (2025-02-17)
 
 
