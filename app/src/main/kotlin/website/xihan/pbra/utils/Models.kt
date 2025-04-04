@@ -1,4 +1,4 @@
-package cn.xihan.heartratehook
+package website.xihan.pbra.utils
 
 import androidx.annotation.Keep
 import kotlinx.serialization.SerialName
@@ -24,7 +24,7 @@ data class HeartRateModel(
     @SerialName("data")
     var `data`: DataModel = DataModel(),
     @SerialName("measured_at")
-    var measuredAt: Long = 0
+    var measuredAt: Long = System.currentTimeMillis()
 ) {
     @Keep
     @Serializable
@@ -33,3 +33,12 @@ data class HeartRateModel(
         var heartRate: Int = 0
     )
 }
+
+@Keep
+@Serializable
+data class LoginModel(
+    @SerialName("username")
+    var username: String = "",
+    @SerialName("password")
+    var password: String = ""
+)
