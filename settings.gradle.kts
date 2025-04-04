@@ -14,13 +14,13 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        google()
-        mavenCentral()
         maven("https://jitpack.io") {
             content {
                 includeGroupByRegex("com\\.github.*")
             }
         }
+        google()
+        mavenCentral()
         maven("https://api.xposed.info/") {
             mavenContent {
                 includeGroup("de.robv.android.xposed")
