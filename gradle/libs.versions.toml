@@ -1,5 +1,5 @@
 [versions]
-agp = "8.9.1"
+agp = "8.10.1"
 dexkit = "2.0.3"
 fastjson2 = "2.0.57"
 koin = "4.0.4"
