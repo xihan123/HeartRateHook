@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/xihan123/HeartRateHook/compare/v1.2.1...v1.3.0) (2025-07-02)
+
+
+### Features
+
+* allow user-defined server address in Cookie mode ([1b92c02](https://github.com/xihan123/HeartRateHook/commit/1b92c026a023fe66e9fc3109e44c63f2faa5d543))
+
 ## [1.2.1](https://github.com/xihan123/HeartRateHook/compare/v1.2.0...v1.2.1) (2025-04-04)
 
 
