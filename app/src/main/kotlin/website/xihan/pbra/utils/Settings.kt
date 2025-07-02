@@ -37,10 +37,12 @@ object Settings {
     const val HK_BASE_URL = "https://public-heart-rate-api.xihan.website"
     const val CLOUD_FLARE_BASE_URL = "https://public-heart-rate-api.xihan.lat"
 
-    fun getSelectedBaseUrl() = if (baseUrlIndex == 0) {
-        HK_BASE_URL
-    } else {
-        CLOUD_FLARE_BASE_URL
+    fun getSelectedBaseUrl(): String {
+        return if (baseUrl.isNotBlank()) {
+            baseUrl
+        } else {
+            if (baseUrlIndex == 0) HK_BASE_URL else CLOUD_FLARE_BASE_URL
+        }
     }
 
     fun getSelectedBaseUrlText() = if (baseUrlIndex == 0) {
