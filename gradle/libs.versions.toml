@@ -5,7 +5,7 @@ fastjson2 = "2.0.57"
 koin = "4.1.0"
 kotlin = "2.1.21"
 kotlinx-coroutines = "1.10.2"
-kotlinx-serialization-json = "1.8.1"
+kotlinx-serialization-json = "1.10.0"
 ktor = "3.1.2"
 serialize = "3.0.1"
 
