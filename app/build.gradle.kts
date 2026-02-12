@@ -5,6 +5,7 @@ import com.android.tools.build.apkzlib.zip.AlignmentRules
 import com.android.tools.build.apkzlib.zip.CompressionMethod
 import com.android.tools.build.apkzlib.zip.ZFile
 import com.android.tools.build.apkzlib.zip.ZFileOptions
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.io.FileInputStream
 import java.security.KeyStore
 import java.security.cert.X509Certificate
@@ -28,7 +29,7 @@ val commitCount = (repo?.commitCount("refs/remotes/origin/master") ?: 25)
 println("commitCount: $commitCount")
 val latestTag = repo?.latestTag?.removePrefix("v") ?: "1.x.x-SNAPSHOT"
 
-val verCode by extra(commitCount  + 25)
+val verCode by extra(commitCount + 25)
 val verName by extra(latestTag)
 println("verCode: $verCode, verName: $verName")
 val androidTargetSdkVersion by extra(35)
@@ -73,8 +74,7 @@ android {
         release {
             isMinifyEnabled = true
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
     }
@@ -83,14 +83,15 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = "17"
-        freeCompilerArgs = listOf(
-            "-Xno-param-assertions",
-            "-Xno-call-assertions",
-            "-Xno-receiver-assertions",
-//            "-language-version=2.0",
-        )
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+            freeCompilerArgs.addAll(
+                listOf(
+                    "-Xno-param-assertions", "-Xno-call-assertions", "-Xno-receiver-assertions"
+                )
+            )
+        }
     }
 
     packagingOptions.apply {
@@ -132,42 +133,28 @@ dependencies {
     compileOnly(libs.xposed.api)
 }
 
-tasks.register("stopMiLife") {
-    exec {
-        commandLine("adb", "shell", "am", "force-stop", "com.mi.health")
-    }
+tasks.register<Exec>("stopMiLife") {
+    commandLine("adb", "shell", "am", "force-stop", "com.mi.health")
 }
 
-val restart = task("restart").apply {
-    doLast {
-        exec {
-            commandLine("adb", "shell", "am", "force-stop", "com.mi.health")
-        }
-        exec {
-            commandLine(
-                "adb",
-                "shell",
-                "am",
-                "start",
-                "$(pm resolve-activity --components com.mi.health)"
-            )
-        }
-    }
+val restart by tasks.registering(Exec::class) {
+    commandLine("adb", "shell", "am", "force-stop", "com.mi.health")
 }
 
-afterEvaluate {
-    tasks.getByPath("installDebug").finalizedBy(restart)
+tasks.matching { it.name == "installDebug" }.configureEach {
+    finalizedBy(restart)
 }
 
 val synthesizeDistReleaseApksCI by tasks.registering {
     group = "build"
     dependsOn(":app:packageRelease")
     inputs.files(tasks.named("packageRelease").get().outputs.files)
-    val srcApkDir =
-        File(project.buildDir, "outputs" + File.separator + "apk" + File.separator + "release")
+    val srcApkDir = layout.buildDirectory.get().asFile.resolve("outputs/apk/release")
     if (srcApkDir !in tasks.named("packageRelease").get().outputs.files) {
-        val msg = "srcApkDir should be in packageRelease outputs, srcApkDir: $srcApkDir, " +
-                "packageRelease outputs: ${tasks.named("packageRelease").get().outputs.files.files}"
+        val msg =
+            "srcApkDir should be in packageRelease outputs, srcApkDir: $srcApkDir, " + "packageRelease outputs: ${
+                tasks.named("packageRelease").get().outputs.files.files
+            }"
         logger.error(msg)
     }
     val outputAbiVariants = mapOf(
@@ -178,7 +165,7 @@ val synthesizeDistReleaseApksCI by tasks.registering {
     )
     val versionName = android.defaultConfig.versionName
     val versionCode = android.defaultConfig.versionCode
-    val outputDir = File(project.buildDir, "outputs" + File.separator + "ci")
+    val outputDir = layout.buildDirectory.get().asFile.resolve("outputs/ci")
     outputAbiVariants.forEach { (variant, _) ->
         val outputName = "HeartRateHook-v${versionName}-${versionCode}-${variant}.apk"
         outputs.file(File(outputDir, outputName))
@@ -226,14 +213,11 @@ val synthesizeDistReleaseApksCI by tasks.registering {
                             KeyStore.PasswordProtection(signConfig.keyPassword!!.toCharArray())
                         val keyEntry = keyStore.getEntry(signConfig.keyAlias!!, protParam)
                         val privateKey = keyEntry as KeyStore.PrivateKeyEntry
-                        val signingOptions = SigningOptions.builder()
-                            .setMinSdkVersion(minSdk)
-                            .setV1SigningEnabled(minSdk < 24)
-                            .setV2SigningEnabled(true)
+                        val signingOptions = SigningOptions.builder().setMinSdkVersion(minSdk)
+                            .setV1SigningEnabled(minSdk < 24).setV2SigningEnabled(true)
                             .setKey(privateKey.privateKey)
                             .setCertificates(privateKey.certificate as X509Certificate)
-                            .setValidation(SigningOptions.Validation.ASSUME_INVALID)
-                            .build()
+                            .setValidation(SigningOptions.Validation.ASSUME_INVALID).build()
                         SigningExtension(signingOptions).register(dstApk)
                     }
                     // add input apk to the output apk
