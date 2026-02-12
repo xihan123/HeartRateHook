@@ -1,12 +1,12 @@
 [versions]
-agp = "8.10.1"
-dexkit = "2.0.6"
-fastjson2 = "2.0.57"
-koin = "4.1.0"
-kotlin = "2.1.21"
+agp = "8.13.2"
+dexkit = "2.0.7"
+fastjson2 = "2.0.61"
+koin = "4.1.1"
+kotlin = "2.3.10"
 kotlinx-coroutines = "1.10.2"
-kotlinx-serialization-json = "1.8.1"
-ktor = "3.1.2"
+kotlinx-serialization-json = "1.10.0"
+ktor = "3.4.0"
 serialize = "3.0.1"
 
 [libraries]
