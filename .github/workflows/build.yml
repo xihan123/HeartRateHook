@@ -32,7 +32,7 @@ jobs:
 
       - name: base64-to-file
         id: write_file
-        uses: timheuer/base64-to-file@v1.2
+        uses: timheuer/base64-to-file@v2.0
         if: ${{ ( github.event_name != 'pull_request' && github.ref == 'refs/heads/master' ) || github.ref_type == 'tag' }}
         with:
           fileName: 'key.jks'
