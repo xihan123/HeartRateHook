@@ -1,7 +1,7 @@
 [versions]
 agp = "8.13.2"
 dexkit = "2.0.7"
-fastjson2 = "2.0.61"
+fastjson2 = "2.0.65"
 koin = "4.1.1"
 kotlin = "2.3.10"
 kotlinx-coroutines = "1.10.2"
