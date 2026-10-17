@@ -32,6 +32,6 @@ xposed-api = { module = "de.robv.android.xposed:api", version = "82" }
 agp-app = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-lsplugin-jgit = { id = "org.lsposed.lsplugin.jgit", version = "1.1" }
+lsplugin-jgit = { id = "org.lsposed.lsplugin.jgit", version = "1.2" }
 lsplugin-resopt = { id = "org.lsposed.lsplugin.resopt", version = "1.6" }
 lsplugin-lsparanoid = { id = "org.lsposed.lsparanoid", version = "0.6.0" }
